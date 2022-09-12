@@ -1,31 +1,24 @@
 import React from 'react'
 import { useQuery } from 'react-query'
-import axios from 'axios'
-import { Container, Stack, Flex, Text, Heading, Grid, Spinner, Button } from '@chakra-ui/react'
+import { Container, Stack, Flex, Text, Heading, Grid, Spinner, Button, useToast } from '@chakra-ui/react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import AddNewPost from './components/AddNewPost'
-
-const fetchPosts = async (id) => {
-    try {
-        const { data } = await axios.get("https://gorest.co.in/public/v1/posts?page=" + id)
-        return data;
-    } catch (err) {
-        throw Error("Unable to fetch posts: " + err.message)
-    }
-}
+import { fetchPosts } from '../Api'
 
 const Home = () => {
+    const toast = useToast();
     const { id } = useParams();
     const history = useNavigate()
     const pageId = parseInt(id);
     const { data, isLoading } = useQuery(
-        ['posts', pageId],
+        ['posts', 1445],
         () => fetchPosts(pageId),
         {
             keepPreviousData: true,
+            onError: (error) => {
+                toast({ status: "error", title: error.message });
+              },
         });
-
-    //console.log(data)
     return (
         <Container maxW="1300px" mt="4">
             {isLoading ? (
@@ -44,7 +37,7 @@ const Home = () => {
                                     history(`/${pageId - 1}`);
                                 }
                             }}
-                            isDisabled={data.meta.pagination.links.previous == null}
+                            isDisabled={!data.meta.pagination.links.previous !== null}
                         >
                             Prev
                         </Button>
@@ -78,7 +71,6 @@ const Home = () => {
                     ))}
                 </>
             )}
-
         </Container>
     )
 }

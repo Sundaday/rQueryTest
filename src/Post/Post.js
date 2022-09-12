@@ -1,17 +1,8 @@
 import React from 'react'
 import { useQuery } from 'react-query'
-import axios from 'axios'
 import { Container, Stack, Flex, Text, Heading, Grid, Spinner, useToast } from '@chakra-ui/react'
 import { useParams } from 'react-router-dom'
-
-const fetchPost = async (id) => {
-    try {
-        const { data } = await axios.get(`https://gorest.co.in/public/v1/users/${id}/posts`)
-        return data;
-    } catch (err) {
-        throw Error("Unable to fetch post: " + err.message)
-    }
-}
+import { fetchPost } from '../Api'
 
 const Post = () => {
     const { id } = useParams();
@@ -40,15 +31,15 @@ const Post = () => {
                         boxShadow="md"
                         borderRadius="20"
                         border="1px solid #ccc"
-                        key={data.data[0].id}
+                        key={data.data.id}
                         mb="4"
                     >
                         <Flex justify="space-between">
-                            <Text>UserId : {data.data[0].user_id}</Text>
-                            <Text>PostId : {data.data[0].id}</Text>
+                            <Text>UserId : {data.data.user_id}</Text>
+                            <Text>PostId : {data.data.id}</Text>
                         </Flex>
-                        <Heading fontSize="2x1">{data.data[0].title}</Heading>
-                        <Text>{data.data[0].body}</Text>
+                        <Heading fontSize="2x1">{data.data.title}</Heading>
+                        <Text>{data.data.body}</Text>
                     </Stack>
 
                 </>
